@@ -1,0 +1,50 @@
+<head>
+  <title>Amelies Einschulung</title>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>Essensliste ({{incompleteCount}})</h1>
+
+      <label class="hide-completed">
+        <input type="checkbox" checked="{{hideCompleted}}" />
+        Erledigte ausblenden
+      </label>
+
+      {{> loginButtons}}
+
+      {{#if currentUser}}
+        <form class="new-item">
+          <input type="text" name="text" placeholder="Tippen zum Hinzufügen" />
+        </form>
+      {{/if}}
+    </header>
+
+    <ul class="list-group">
+      {{#each items}}
+        {{> item}}
+      {{/each}}
+    </ul>
+  </div>
+</body>
+
+<template name="item">
+  <li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}} list-group-item">
+    <button class="delete">&times;</button>
+
+    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
+
+    {{#if isOwner}}
+      <button class="toggle-private">
+        {{#if private}}
+          Privat    
+        {{else}}
+          Öffentlich
+        {{/if}}
+      </button>
+    {{/if}}
+
+    <span class="text"><strong>{{username}}</strong> - {{text}}</span>
+  </li>
+</template>
