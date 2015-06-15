@@ -8,19 +8,8 @@ if (Meteor.isClient) {
 
   Template.body.helpers({
     items: function () {
-      if (Session.get("hideCompleted")) {
-        // If hide completed is checked, filter items
-        return Items.find({checked: {$ne: true}}, {sort: {createdAt: -1}});
-      } else {
-        // Otherwise, return all of the items
+        // return all items
         return Items.find({}, {sort: {createdAt: -1}});
-      }
-    },
-    hideCompleted: function () {
-      return Session.get("hideCompleted");
-    },
-    incompleteCount: function () {
-      return Items.find({checked: {$ne: true}}).count();
     }
   });
 
@@ -36,23 +25,13 @@ if (Meteor.isClient) {
 
       // Prevent default form submit
       return false;
-    },
-    "change .hide-completed input": function (event) {
-      Session.set("hideCompleted", event.target.checked);
     }
   });
 
   Template.item.events({
-    "click .toggle-checked": function () {
-      // Set the checked property to the opposite of its current value
-      Meteor.call("setChecked", this._id, ! this.checked);
-    },
     "click .delete": function () {
       Meteor.call("deleteItem", this._id);
     },
-    "click .toggle-private": function () {
-      Meteor.call("setPrivate", this._id, ! this.private);
-    }
   });
 
   Template.item.helpers({
@@ -63,7 +42,18 @@ if (Meteor.isClient) {
 
   Accounts.ui.config({
     passwordSignupFields: "USERNAME_ONLY"
-  });  
+  }); 
+} else {
+  Accounts.onCreateUser(function(options, user){
+    // user registered via Facebook
+    if(options.profile){
+      user.username = options.profile.name;
+      options.profile.picture = "http://graph.facebook.com/" + user.services.facebook.id + "/picture/?type=large";
+      user.profile = options.profile;
+    }
+
+    return user;
+  });
 }
 
 Meteor.methods({
@@ -88,38 +78,11 @@ Meteor.methods({
     }
 
     Items.remove(itemId);
-  },
-  setChecked: function (itemId, setChecked) {
-    var item = Items.findOne(itemId);
-    if (item.private && item.owner !== Meteor.userId()) {
-      // If the item is private, make sure only the owner can check it off
-      throw new Meteor.Error("not-authorized");
-    }
-
-    Items.update(itemId, { $set: { checked: setChecked} });
-  },
-  setPrivate: function (itemId, setToPrivate) {
-    var item = Items.findOne(itemId);
-
-    // Make sure only the item owner can make a item private
-    if (item.owner !== Meteor.userId()) {
-      throw new Meteor.Error("not-authorized");
-    }
-
-    Items.update(itemId, { $set: { private: setToPrivate } });
   }
-
-
 });
 
 if (Meteor.isServer) {
-  // Only publish items that are public or belong to the current user
   Meteor.publish("items", function () {
-    return Items.find({
-      $or: [
-        { private: {$ne: true} },
-        { owner: this.userId }
-      ]
-    });
+    return Items.find();
   });
 }

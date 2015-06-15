@@ -4,45 +4,77 @@
 
 <body>
   <div class="container">
-    <header>
-      <h1>Essensliste ({{incompleteCount}})</h1>
-
-      <label class="hide-completed">
-        <input type="checkbox" checked="{{hideCompleted}}" />
-        Erledigte ausblenden
-      </label>
-
-      {{> loginButtons}}
-
-      {{#if currentUser}}
-        <form class="new-item">
-          <input type="text" name="text" placeholder="Tippen zum Hinzufügen" />
-        </form>
-      {{/if}}
-    </header>
-
-    <ul class="list-group">
-      {{#each items}}
-        {{> item}}
-      {{/each}}
-    </ul>
+  <div class="page-header">
+		  <h1>Essensliste <small>für Amelies Einschulung</small></h1>
+		  {{> loginButtons}}
+		  {{#if currentUser}}
+				<form class="new-item form-inline">
+				<div class="form-group">
+					<label for="exampleInputName2">zur Liste hinzufügen</label>
+					<input type="text" class="form-control" name="text" placeholder="was bringst du mit?">
+				  </div>
+				  <button type="submit" class="btn btn-default">Eintragen</button>
+				</form>
+				{{else}}
+				<p class="help-block">zum Eintragen bitte anmelden</p>
+			  {{/if}}
+		</div>
+	  <div class="row">
+		<div class="col-md-5">
+			<div class="row">
+				<div class="col-xs-3">
+					<img src="/images/amelie_s.jpg" class="img-circle" alt="Amelie">
+				</div>
+				<div class="col-xs-3">
+					<img src="/images/talea_s.jpg" class="img-circle" alt="Talea">
+				</div>
+				<div class="col-xs-3">
+					<img src="/images/sophia_s.jpg" class="img-circle" alt="Sophia">
+				</div>
+				<div class="col-xs-3">
+					<img src="/images/ameUndSascha_s.jpg" class="img-circle" alt="Amelie und Sascha">
+				</div>
+			
+		</div>
+			<p><strong>Wir heissen euch herzlich willkommen auf der Website zur Einschulung.</strong></p>
+			<p>Damit wir alle Infomationen an alle verteilen können und das Organisieren wer was mitbringt leichter von statten geht, haben wir hier eine Liste eingerichtet, in die Ihr euch eintragen könnt.</p>
+			<p>Dafür bitte einfach schnell registrieren. Es wird nur ein Benutzername und Passwort erfragt (damit man auch weiß, wer sich da eingetragen hat).</p>
+			<p>Wer mag, kann sich auch mit seinem Facebook-account anmelden (wir speichern natürlich nichts. Wir benutzen nur den Namen und das Profilbild hier zum Anzeigen).</p>
+			<p class="lead">Alle Infos auf einen Blick</p>
+			<ul>
+				<li>Tag der Veranstaltung: <strong>05.09.2015</strong></li>
+				<li>Ort der Veranstaltung: <strong><a href="http://www.volkspark-potsdam.de/content/view/548/86/" target="_blank">Partygärtchen im Volkspark Potsdam</a></strong></li>
+			</ul>
+				<img class="center-block" src="http://maps.googleapis.com/maps/api/staticmap?center=Georg-Hermann-Allee+101,+14469+Potsdam&zoom=16&size=380x300&maptype=roadmap&markers=color:blue%7Clabel:P%7C52.4217378,13.0502129">
+		</div>
+		<div class="col-md-7">
+			<h4>Die Liste</h4>
+			<ul class="list-group">
+			  {{#each items}}
+			    {{> item}}
+			  {{/each}}
+			</ul>
+		</div>
+	  </div>
   </div>
+  
+  <footer class="footer">
+      <div class="container">
+		<div class="row">
+			<div class="col-md-offset-2 col-md-8">
+				<p class="text-muted">Website erstellt mit <span class="glyphicon glyphicon-heart"></span> und <a href="https://www.meteor.com/" target="_blank">Meteor</a>.</p>
+			</div>
+		</div>
+      </div>
+    </footer>
 </body>
 
 <template name="item">
-  <li class="{{#if checked}}checked{{/if}} {{#if private}}private{{/if}} list-group-item">
-    <button class="delete">&times;</button>
-
-    <input type="checkbox" checked="{{checked}}" class="toggle-checked" />
-
+  <li class="list-group-item">
     {{#if isOwner}}
-      <button class="toggle-private">
-        {{#if private}}
-          Privat    
-        {{else}}
-          Öffentlich
-        {{/if}}
-      </button>
+		<button type="button" class="btn btn-default btn-xs delete pull-right">
+		  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+		</button>
     {{/if}}
 
     <span class="text"><strong>{{username}}</strong> - {{text}}</span>
