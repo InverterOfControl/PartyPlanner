@@ -1,4 +1,5 @@
 Items = new Mongo.Collection("items");
+MissingItems = new Mongo.Collection("missingItems");
 
 if (Meteor.isClient) {
   accountsUIBootstrap3.setLanguage('de');
@@ -25,7 +26,19 @@ if (Meteor.isClient) {
 
       // Prevent default form submit
       return false;
-    }
+    },
+	
+	"submit .new-missingItem": function(event){
+		var text = event.target.text.value;
+		
+		Meteor.call("addMissingItem", text);
+		
+		// Clear form
+		event.target.text.value = "";
+
+		// Prevent default form submit
+		return false;
+	}
   });
 
   Template.item.events({
@@ -34,6 +47,10 @@ if (Meteor.isClient) {
     },
   });
 
+  Template.registerHelper('equals', function (a, b) {
+      return a === b;
+    });
+  
   Template.item.helpers({
     isOwner: function () {
       return this.owner === Meteor.userId();
@@ -78,6 +95,16 @@ Meteor.methods({
     }
 
     Items.remove(itemId);
+  },
+  addMissingItem: function(text){
+	  // Make sure the user is logged in before inserting a item
+    if (! Meteor.userId()) {
+      throw new Meteor.Error("not-authorized");
+    }
+
+    MissingItems.insert({
+      text: text
+    });
   }
 });
 

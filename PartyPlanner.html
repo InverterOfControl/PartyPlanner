@@ -1,51 +1,72 @@
 <head>
-  <title>Amelies Einschulung</title>
+  <title>Amelies Einschulung & Katrins 50. Geburtstag</title>
 </head>
 
 <body>
   <div class="container">
-  <div class="page-header">
-		  <h1>Essensliste <small>für Amelies Einschulung</small></h1>
-		  {{> loginButtons}}
-		  {{#if currentUser}}
-				<form class="new-item form-inline">
-				<div class="form-group">
-					<label for="exampleInputName2">zur Liste hinzufügen</label>
-					<input type="text" class="form-control" name="text" placeholder="was bringst du mit?">
-				  </div>
-				  <button type="submit" class="btn btn-default">Eintragen</button>
-				</form>
-				{{else}}
-				<p class="help-block">zum Eintragen bitte anmelden</p>
-			  {{/if}}
+	  <nav class="navbar navbar-default" role="navigation">
+		<div>
+		  <div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+		  <span class="sr-only">Toggle navigation</span>
+		  <span class="icon-bar"></span>
+		  <span class="icon-bar"></span>
+		  <span class="icon-bar"></span>
+		</button>
+		<a class="navbar-brand" href="#"><i class="flaticon-balloons2"></i> Party Planner</a>
+		  </div>
+		   {{#if currentUser}}
+					<form class="new-item navbar-form navbar-right">
+					<div class="form-group">
+						<input type="text" class="form-control" name="text" placeholder="was bringst du mit?">
+					  </div>
+					  <button type="submit" class="btn btn-default">Eintragen</button>
+					</form>
+					{{else}}
+					<p class="navbar-text pull-right">| zum Eintragen bitte anmelden</p>
+				  {{/if}}
+		  <ul class="nav navbar-nav navbar-right">
+		   {{> loginButtons}}
+		  </ul>
 		</div>
+	  </nav>
 	  <div class="row">
-		<div class="col-md-5">
-			<div class="row">
-				<div class="col-xs-3">
-					<img src="/images/amelie_s.jpg" class="img-circle" alt="Amelie">
-				</div>
-				<div class="col-xs-3">
-					<img src="/images/talea_s.jpg" class="img-circle" alt="Talea">
-				</div>
-				<div class="col-xs-3">
-					<img src="/images/sophia_s.jpg" class="img-circle" alt="Sophia">
-				</div>
-				<div class="col-xs-3">
-					<img src="/images/ameUndSascha_s.jpg" class="img-circle" alt="Amelie und Sascha">
-				</div>
-			
+		<div class="jumbotron col-md-12">
+		<img src="/images/amelie_s.jpg" class="img-thumbnail pull-right" alt="Amelie">
+		<img src="/images/amelie_s.jpg" class="img-thumbnail pull-left" alt="Amelie">
+		  <h1 class="text-center">Einschulung & 50. Geburtstag</h1>
+		  <p class="text-center"><strong><i class="flaticon-celebration11"></i>&nbsp;&nbsp;Wir heissen euch herzlich willkommen auf der Website zur Einschulung<i class="flaticon-celebration11"></i></strong></p>
 		</div>
-			<p><strong>Wir heissen euch herzlich willkommen auf der Website zur Einschulung.</strong></p>
-			<p>Damit wir alle Infomationen an alle verteilen können und das Organisieren wer was mitbringt leichter von statten geht, haben wir hier eine Liste eingerichtet, in die Ihr euch eintragen könnt.</p>
-			<p>Dafür bitte einfach schnell registrieren. Es wird nur ein Benutzername und Passwort erfragt (damit man auch weiß, wer sich da eingetragen hat).</p>
-			<p>Wer mag, kann sich auch mit seinem Facebook-account anmelden (wir speichern natürlich nichts. Wir benutzen nur den Namen und das Profilbild hier zum Anzeigen).</p>
+		
+		{{#unless currentUser}}
+		<div class="col-md-12 well">
+		  <p class="help-block"><small>Damit wir alle Infomationen an alle verteilen können und das Organisieren wer was mitbringt leichter von statten geht, haben wir hier eine Liste eingerichtet, in die Ihr euch eintragen könnt.</small></p>
+		  <p class="help-block"><small>Dafür bitte einfach schnell registrieren. Es wird nur ein Benutzername und Passwort erfragt (damit man auch weiß, wer sich da eingetragen hat).</small></p>
+		  <p class="help-block"><small>Wer mag, kann sich auch mit seinem Facebook-account anmelden (wir speichern natürlich nichts. Wir benutzen nur den Namen und das Profilbild hier zum Anzeigen)</small>.</p> 
+		</div>
+		{{/unless}}
+		<div class="col-md-5">
 			<p class="lead">Alle Infos auf einen Blick</p>
 			<ul>
 				<li>Tag der Veranstaltung: <strong>05.09.2015</strong></li>
 				<li>Ort der Veranstaltung: <strong><a href="http://www.volkspark-potsdam.de/content/view/548/86/" target="_blank">Partygärtchen im Volkspark Potsdam</a></strong></li>
 			</ul>
 				<img class="center-block" src="http://maps.googleapis.com/maps/api/staticmap?center=Georg-Hermann-Allee+101,+14469+Potsdam&zoom=16&size=380x300&maptype=roadmap&markers=color:blue%7Clabel:P%7C52.4217378,13.0502129">
+				<br />
+				<p class="lead">Folgendes fehlt noch:</p>
+				{{#if equals username "Sascha"}}
+					<form class="new-missingItem">
+					<div class="form-group">
+						<input type="text" class="form-control" name="text" placeholder="was fehlt noch?">
+					  </div>
+					  <button type="submit" class="btn btn-default">Eintragen</button>
+					</form>
+				{{/if}}
+				<ul>
+					{{#each missingItems}}
+						{{> missingItem}}
+					{{/each}}
+				</ul>
 		</div>
 		<div class="col-md-7">
 			<h4>Die Liste</h4>
@@ -62,7 +83,11 @@
       <div class="container">
 		<div class="row">
 			<div class="col-md-offset-2 col-md-8">
-				<p class="text-muted">Website erstellt mit <span class="glyphicon glyphicon-heart"></span> und <a href="https://www.meteor.com/" target="_blank">Meteor</a>.</p>
+				<p class="text-muted text-center">Website erstellt mit <span class="glyphicon glyphicon-heart"></span> und <a href="https://www.meteor.com/" target="_blank">Meteor</a>.</p>
+				<p class="text-muted text-center">
+				Font generated by <a href="http://www.flaticon.com">flaticon.com</a>
+ under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY</a>. The authors are: <a href="http://www.freepik.com">Freepik</a>.
+ </p>
 			</div>
 		</div>
       </div>
@@ -79,4 +104,10 @@
 
     <span class="text"><strong>{{username}}</strong> - {{text}}</span>
   </li>
+</template>
+
+<template name="missingItem">
+	<li class="list-group-item">
+		{{text}}
+	</li>
 </template>
