@@ -7,10 +7,16 @@ if (Meteor.isClient) {
   // This code only runs on the client
   Meteor.subscribe("items");
 
+  Meteor.subscribe("missingItems");
+  
   Template.body.helpers({
     items: function () {
         // return all items
         return Items.find({}, {sort: {createdAt: -1}});
+    },
+	missingItems: function () {
+        // return all items
+        return MissingItems.find();
     }
   });
 
@@ -47,6 +53,18 @@ if (Meteor.isClient) {
     },
   });
 
+  Template.missingItem.events({
+	 "click .delete": function(){
+		 Meteor.call("removeMissingItem", this._id);
+	 }
+  });
+  
+  Template.missingItem.helpers({
+	 isAdmin: function(){
+		 return Meteor.user().username === "Sascha";
+	 } 
+  });
+  
   Template.registerHelper('equals', function (a, b) {
       return a === b;
     });
@@ -63,7 +81,7 @@ if (Meteor.isClient) {
 } else {
   Accounts.onCreateUser(function(options, user){
     // user registered via Facebook
-    if(options.profile){
+    if(options.profile && user.services && user.services.facebook){
       user.username = options.profile.name;
       options.profile.picture = "http://graph.facebook.com/" + user.services.facebook.id + "/picture/?type=large";
       user.profile = options.profile;
@@ -87,6 +105,7 @@ Meteor.methods({
       username: Meteor.user().username
     });
   },
+  
   deleteItem: function (itemId) {
     var item = Items.findOne(itemId);
     if (item.private && item.owner !== Meteor.userId()) {
@@ -96,20 +115,33 @@ Meteor.methods({
 
     Items.remove(itemId);
   },
+  
   addMissingItem: function(text){
 	  // Make sure the user is logged in before inserting a item
     if (! Meteor.userId()) {
       throw new Meteor.Error("not-authorized");
     }
-
+	
+	if(!text){
+		return;
+	}
+	
     MissingItems.insert({
       text: text
     });
+  },
+  
+  removeMissingItem: function(itemId){
+	  MissingItems.remove(itemId);
   }
 });
 
 if (Meteor.isServer) {
   Meteor.publish("items", function () {
     return Items.find();
+  });
+  
+  Meteor.publish("missingItems", function(){
+	  return MissingItems.find();
   });
 }
